@@ -1,0 +1,6 @@
+[submodule "dota2rails"]
+	path = dota2rails
+	url = git@github.com:grschafer/dota2rails.git
+[submodule "alacrity"]
+	path = alacrity
+	url = git@github.com:grschafer/alacrity.git
