@@ -12,31 +12,43 @@
 
 - shell: echo $PATH
 
+- shell: env
+
 # TODO: move this to capistrano?
+- name: bundle install
+  command: bundle install chdir={{ deploy_path }}
+
 - name: bundle update
-  command: "{{ ruby_bin }}/bundle update chdir={{ deploy_path }}"
+  command: bundle update chdir={{ deploy_path }}
 
 # glob not working correctly
 #- name: clear cached pages
 #  shell: rm {{ deploy_path }}/public/**/*.html
 
 - name: precompile assets
-  shell: "RAILS_ENV=production {{ ruby_bin }}/bundle exec rake assets:precompile chdir={{ deploy_path }}"
+  shell: RAILS_ENV=production bundle exec rake assets:precompile chdir={{ deploy_path }}
 
 - name: is unicorn running
   shell: ps aux | grep "unicorn_rails master" | grep -v grep
   register: unicorn_running
   ignore_errors: yes
 
+- shell: whoami
+
+- shell: echo $PATH
+
+- shell: env
+
+# TODO: do proper unicorn replacement, see http://unicorn.bogomips.org/SIGNALS.html
 - name: HUP unicorn
   command: pkill -HUP -f "unicorn_rails master"
   when: unicorn_running|success
 
-- name: find unicorn
-  command: "/home/vagrant/.rbenv/bin/rbenv which unicorn_rails"
-  register: unicorn_bin
-
 - name: start unicorn
-  # TODO: this isn't going to return, run it as daemon
-  # somehow or actually look into capistrano
-  shell: "RAILS_ENV=production {{ unicorn_bin.stdout }} -c unicorn.conf chdir={{ deploy_path }}"
+  # this isn't going to return, run it as daemon (-D)
+  shell: "RAILS_ENV=production unicorn_rails -D -c unicorn.conf & chdir={{ deploy_path }}"
+  when: unicorn_running|failed
+
+- name: ensure unicorn running
+  shell: ps aux | grep "unicorn_rails master" | grep -v grep
+  when: unicorn_running|failed

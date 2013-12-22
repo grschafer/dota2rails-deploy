@@ -1,10 +1,16 @@
+# webservers run dota2rails (rails, nginx, unicorn)
 [webservers]
-10.11.12.13
+#10.0.0.2
 
 # first dbserver is targeted by webapp
-# (see roles/app/templates/mongo.rb.j2)
+# (see roles/app/templates/mongo.rb.j2 and group_vars/all)
+# dbservers run mongodb
 [dbservers]
-10.11.12.13
+#10.0.0.2
+
+# mqservers run alacrity (rabbitmq, celery, skadi)
+[mqservers]
+#10.0.0.3
 
 [special]
-10.11.12.13
+10.0.0.2

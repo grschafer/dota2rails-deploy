@@ -13,25 +13,27 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.define :web do |web_config|
     web_config.vm.host_name = 'web'
-    web_config.vm.network :private_network, ip: "10.0.0.1"
+    web_config.vm.network :private_network, ip: "10.0.0.2"
     web_config.vm.synced_folder "./dota2rails", "/webapps/dota2rails"
-    web_config.vm.network :forwarded_port, guest: 80, host: 8080
+    web_config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
 
   end
 
-  config.vm.define :mq do |mq_config|
-    mq_config.vm.host_name = 'mq'
-    mq_config.vm.network :private_network, ip: "10.0.0.1"
-    mq_config.vm.synced_folder "./alacrity", "/mqapps/alacrity"
-    #mq_config.vm.network :forwarded_port, guest: 80, host: 8080
+  #config.vm.define :mq do |mq_config|
+  #  mq_config.vm.host_name = 'mq'
+  #  mq_config.vm.network :private_network, ip: "10.0.0.3"
+  #  mq_config.vm.synced_folder "./alacrity", "/mqapps/alacrity"
+  #  #mq_config.vm.network :forwarded_port, guest: 80, host: 8080, auto_correct: true
 
-  end
+  #end
 
   config.vm.provision :ansible do |ansible|
     ansible.playbook = "ansible/playbook.yml"
     ansible.inventory_path = "ansible/hosts"
-    ansible.verbose = true
+    ansible.verbose = 'vv'
     ansible.ask_sudo_pass = true
+    ansible.tags = "deploy"
+    ansible.start_at_task = "is unicorn running"
   end
 
 end

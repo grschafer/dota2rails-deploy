@@ -6,7 +6,7 @@
 # - writes steam_api_key to config
 # - writes app_secret to config
 # - writes db access data to config
-- include: first_deploy.yml tags=deploy
+- include: first_deploy.yml
 
 # deploy does:
 # - update gems

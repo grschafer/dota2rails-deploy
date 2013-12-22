@@ -1,0 +1,12 @@
+---
+- name: ensure pip installed
+  apt: pkg=pip state=latest
+
+# TODO: make requirements.txt file and pin dependency versions?
+- name: pip install celery and dependencies
+  pip: name={{ item }} state=latest
+  with_items:
+    - librabbitmq
+    - requests
+    - celery
+    - flower

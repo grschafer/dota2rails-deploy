@@ -1,0 +1,17 @@
+---
+- name: add rabbitmq repo
+  apt_repository: repo='deb http://www.rabbitmq.com/debian/ testing main'
+
+- name: add rabbitmq repo key
+  apt_key: url='http://www.rabbitmq.com/rabbitmq-signing-key-public.asc'
+
+- name: install rabbitmq-server
+  apt: pkg=rabbitmq-server state=latest update_cache=yes
+
+- name: install rabbitmq management plugin
+  rabbitmq_plugin: names=rabbitmq_management state=enabled
+
+- name: ensure rabbitmq started and enabled
+  service: name=rabbitmq-server state=started enabled=yes
+
+# add rabbitmq-server to ufw allow (port 5672)

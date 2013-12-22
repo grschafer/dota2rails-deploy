@@ -1,0 +1,36 @@
+---
+# install cython
+- name: ensure pip installed
+  apt: pkg=pip state=latest
+
+- name: pip install cython
+  pip: name=cython state=latest
+
+- name: ensure dependencies installed
+  apt: pkg={{ item }} state=latest
+  with_items:
+    - python-dev
+    - libsnappy1
+    - libsnappy-dev
+    - python-protobuf
+    - python-snappy
+
+# set up submodules and python setup install them
+- name: init update submodules (skadi and tarrasque)
+  command: git submodule update --init chdir={{ deploy_path }}
+
+- name: python setup install skadi
+  command: python setup.py install chdir={{ deploy_path }}/external/skadi
+
+- name: python setup install tarrasque
+  command: python setup.py install chdir={{ deploy_path }}/external/tarrasque
+
+- name: copy alacrity config
+  template: src=config.cfg.j2 dest={{ deploy_path }}/alacrity/config/config.cfg
+
+- name: copy celery config
+  template: src=celeryconfig.py.j2 dest={{ deploy_path }}/alacrity/mq/celeryconfig.py
+
+- name: start celery workers
+  command: celery multi start {{ num_celery_workers }} --app=alacrity.mq -c {{ celery_concurrency }} --beat chdir={{ deploy_path }}
+

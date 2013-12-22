@@ -1,0 +1,14 @@
+[db]
+host: {{ mongodb_host }}
+port: {{ mongodb_port }}
+db_name: {{ db_name }}
+match_collection: {{ db_collections.matches }}
+league_collection: {{ db_collections.leagues }}
+errorgame_collection: {{ db_collections.errorgames }}
+
+[api]
+key: {{ steam_api_key }}
+# leagues that are free/open or that you have ticket for
+# 65006 = TI3
+# 65013 = MLG Columbus $50,000
+accessible_leagues: {{ accessible_leagues }}

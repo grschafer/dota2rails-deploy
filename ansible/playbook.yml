@@ -6,38 +6,51 @@
     - role: common
 
 - name: install rbenv and ruby
-  hosts: none # webservers
+  hosts: webservers # webservers
   sudo: yes
   roles:
     - role: ruby-multi
       versions: $ruby_versions
 
 - name: install nodejs
-  hosts: none # webservers
+  hosts: webservers # webservers
   sudo: yes
   roles:
     - role: nodejs
 
 - name: install nginx
-  hosts: none # webservers
+  hosts: webservers # webservers
   sudo: yes
   roles:
     - role: nginx
 
 - name: install mongodb
-  hosts: none # dbservers
+  hosts: dbservers # dbservers
   sudo: yes
   roles:
     - role: mongodb
     - role: mongodb-firewall
 
-- name: install app
-  hosts: webservers
+# TODO: split installing from deploying?
+- name: install dota2rails app
+  hosts: special
   remote_user: "{{ deploy_user }}"
   sudo: no
-  vars:
-    ruby_bin: "/home/{{ deploy_user }}/.rbenv/shims"
   roles:
-    - role: app
+    - role: dota2rails
+
+- name: install rabbitmq
+  hosts: mqservers # mqservers
+  sudo: yes
+  roles:
+    - role: rabbitmq
+
+- name: install celery
+  hosts: mqservers # mqservers
+  sudo: no
+  roles:
+    - role: celery
+
+- name: install and run alacrity
 
 # TODO: gems and stuff or using capistrano too?

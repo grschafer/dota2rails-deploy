@@ -1,10 +1,4 @@
 ---
-- name: add apt_repository dependencies
-  apt: pkg={{ item }} state=latest
-  with_items:
-    - python-apt
-    - python-pycurl
-
 - name: add nginx latest version ppa
   apt_repository: repo=ppa:nginx/stable
 
@@ -16,3 +10,6 @@
 
 - name: copy sites-available default template
   template: src=sites-available-default.j2 dest=/etc/nginx/sites-available/default
+
+- name: enable port 80 in firewall
+  shell: ufw allow 80

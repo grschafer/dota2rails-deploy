@@ -1,0 +1,6 @@
+appname: alacrity
+deploy_path: /mqapps/{{ appname }}
+deploy_user: vagrant
+
+num_celery_workers: 1
+celery_concurrency: 1
