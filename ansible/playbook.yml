@@ -12,12 +12,6 @@
     - role: ruby-multi
       versions: $ruby_versions
 
-- name: install nodejs
-  hosts: webservers # webservers
-  sudo: yes
-  roles:
-    - role: nodejs
-
 - name: install nginx
   hosts: webservers # webservers
   sudo: yes
@@ -33,7 +27,7 @@
 
 # TODO: split installing from deploying?
 - name: install dota2rails app
-  hosts: special
+  hosts: special # webservers
   remote_user: "{{ deploy_user }}"
   sudo: no
   roles:
@@ -52,5 +46,14 @@
     - role: celery
 
 - name: install and run alacrity
+  hosts: mqservers # mqservers
+  roles:
+    - role: alacrity
 
-# TODO: gems and stuff or using capistrano too?
+- name: install node and matchurls
+  hosts: matchurls # matchurls
+  sudo: yes
+  roles:
+    - role: nodejs
+    - role: matchurls
+

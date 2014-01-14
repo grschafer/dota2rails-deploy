@@ -1,0 +1,15 @@
+---
+- name: ensure /webapps/matchurls folder
+  file: path={{ deploy_path }} state=directory
+
+- name: download matchurls repo
+  git: repo=git://github.com/grschafer/matchurls.git dest={{ deploy_path }}
+
+- name: update/install matchurls dependencies
+  command: npm install chdir={{ deploy_path }}
+
+- name: template matchurls config
+  template: src=config.js.j2 dest={{ deploy_path }}/config.js
+
+- name: make empty sentry file
+  command: touch sentry chdir={{ deploy_path }} creates={{ deploy_path }}/sentry

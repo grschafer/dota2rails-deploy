@@ -23,21 +23,5 @@
     owner={{ deploy_user }}
     recurse=yes
 
-- name: ensure steam_api_key in config
-  lineinfile: '
-    dest={{ deploy_path }}/config/application.yml
-    regexp=^STEAM_WEB_API_KEY
-    line="STEAM_WEB_API_KEY: {{ steam_api_key }}"
-    create=yes
-    state=present'
-
-- name: ensure app secret in config
-  lineinfile: '
-    dest={{ deploy_path }}/config/application.yml
-    regexp=^SECRET_TOKEN
-    line="SECRET_TOKEN: {{ app_secret }}"
-    create=yes
-    state=present'
-
-- name: copy mongodb access details
-  template: src=mongo.rb.j2 dest={{ deploy_path }}/config/initializers/mongo.rb
+- name: copy templated config
+  template: src=application.yml.rb.j2 dest={{ deploy_path }}/config/application.yml

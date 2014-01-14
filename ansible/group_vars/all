@@ -7,9 +7,22 @@ db_collections:
   matches: matches
   leagues: leagues
   errorgames: errorgames
+  useruploads: useruploads
 accessible_leagues:
   - 65006 # TI3
   - 65013 # MLG Columbus Nov 2013
 
 # shared between dota2rails (steam openid) and alacrity (steam web api)
 steam_api_key: 123456
+
+# aws s3 access credentials
+s3:
+  dota2rails:
+    access_key:
+    secret_key:
+  alacrity:
+    access_key:
+    secret_key:
+  buckets:
+    replays: "dota2rails.user.replays"
+    match_data: "dota2rails.match.data"

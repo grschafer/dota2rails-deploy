@@ -1,0 +1,22 @@
+# {{ ansible_managed }}
+
+# app secret
+SECRET_TOKEN: {{ app_secret }} # your rake secret generated token
+
+# steam
+STEAM_WEB_API_KEY: {{ steam_api_key }} # your steam web api key
+
+# db
+MONGO_HOST: {{ mongodb_host }} # hostname/ip of mongo server
+MONGO_PORT: {{ mongodb_port }} # port of mongo on mongo server
+# collections
+DB_NAME: {{ db_name }}
+MATCH_COL: {{ db_collections.matches }}
+LEAGUE_COL: {{ db_collections.leagues }}
+ERRORGAME_COL: {{ db_collections.errorgames }}
+USERUPLOAD_COL: {{ db_collections.useruploads }}
+
+# s3
+ACCESS_KEY: {{ s3.dota2rails.access_key }} # s3 user access key
+SECRET_KEY: {{ s3.dota2rails.secret_key }} # s3 user secret key
+BUCKET: {{ s3.buckets.replays }} # s3 bucket name

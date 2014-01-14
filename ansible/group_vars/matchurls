@@ -1,0 +1,10 @@
+appname: matchurls
+deploy_path: /webapps/{{ appname }}
+deploy_user: vagrant
+
+steam:
+  name:
+  user:
+  pass:
+  guard_code:
+

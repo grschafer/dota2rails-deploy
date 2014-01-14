@@ -1,4 +1,5 @@
 appname: dota2rails
+hostname: {{ groups['webservers'][0] }}
 deploy_path: /webapps/{{ appname }}
 deploy_user: vagrant
 
