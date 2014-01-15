@@ -1,54 +1,42 @@
 ---
-- name: ensure repo exists at {{ deploy_path }}
-  stat: path={{ deploy_path }}
+- name: ensure repo exists at {{ web.deploy_path }}
+  stat: path={{ web.deploy_path }}
   register: app_path
 
 - fail: msg="Webapp repo was not synced to the server/VM"
   when: app_path.stat.isdir is not defined or app_path.stat.isdir == false
 
-- debug: msg="bundle update in dir {{ deploy_path }}"
-
-- shell: whoami
-
-- shell: echo $PATH
-
-- shell: env
-
 # TODO: move this to capistrano?
 - name: bundle install
-  command: bundle install chdir={{ deploy_path }}
+  command: /home/{{ ruby_deploy_user }}/.rbenv/shims/bundle install chdir={{ web.deploy_path }}
 
 - name: bundle update
-  command: bundle update chdir={{ deploy_path }}
+  command: /home/{{ ruby_deploy_user }}/.rbenv/shims/bundle update chdir={{ web.deploy_path }}
+
+- name: rehash rbenv shims
+  command: "/home/{{ ruby_deploy_user }}/.rbenv/bin/rbenv rehash"
 
 # glob not working correctly
 #- name: clear cached pages
-#  shell: rm {{ deploy_path }}/public/**/*.html
+#  shell: rm {{ web.deploy_path }}/public/**/*.html
 
 - name: precompile assets
-  shell: RAILS_ENV=production bundle exec rake assets:precompile chdir={{ deploy_path }}
+  shell: RAILS_ENV=production /home/{{ ruby_deploy_user }}/.rbenv/shims/bundle exec rake assets:precompile chdir={{ web.deploy_path }}
 
 - name: is unicorn running
   shell: ps aux | grep "unicorn_rails master" | grep -v grep
   register: unicorn_running
   ignore_errors: yes
 
-- shell: whoami
-
-- shell: echo $PATH
-
-- shell: env
-
 # TODO: do proper unicorn replacement, see http://unicorn.bogomips.org/SIGNALS.html
 - name: HUP unicorn
   command: pkill -HUP -f "unicorn_rails master"
   when: unicorn_running|success
 
+# this isn't going to return, run it as daemon (-D)
 - name: start unicorn
-  # this isn't going to return, run it as daemon (-D)
-  shell: "RAILS_ENV=production unicorn_rails -D -c unicorn.conf & chdir={{ deploy_path }}"
+  shell: "RAILS_ENV=production /home/{{ ruby_deploy_user }}/.rbenv/shims/unicorn_rails -D -c unicorn.conf chdir={{ web.deploy_path }}"
   when: unicorn_running|failed
 
 - name: ensure unicorn running
   shell: ps aux | grep "unicorn_rails master" | grep -v grep
-  when: unicorn_running|failed

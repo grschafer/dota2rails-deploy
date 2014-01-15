@@ -1,6 +1,9 @@
 ---
 - name: ensure pip installed
-  apt: pkg=pip state=latest
+  apt: pkg=python-pip state=latest
+
+- name: ensure python-dev installed
+  apt: pkg=python-dev state=latest
 
 # TODO: make requirements.txt file and pin dependency versions?
 - name: pip install celery and dependencies

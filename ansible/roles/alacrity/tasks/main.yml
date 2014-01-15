@@ -1,10 +1,14 @@
 ---
 # install cython
 - name: ensure pip installed
-  apt: pkg=pip state=latest
+  apt: pkg=python-pip state=latest
 
-- name: pip install cython
-  pip: name=cython state=latest
+- name: pip install dependencies
+  pip: name={{ item }} state=latest
+  with_items:
+    - cython
+    - pymongo
+    - boto
 
 - name: ensure dependencies installed
   apt: pkg={{ item }} state=latest
@@ -16,21 +20,22 @@
     - python-snappy
 
 # set up submodules and python setup install them
-- name: init update submodules (skadi and tarrasque)
-  command: git submodule update --init chdir={{ deploy_path }}
-
 - name: python setup install skadi
-  command: python setup.py install chdir={{ deploy_path }}/external/skadi
+  command: python setup.py install chdir={{ mq.deploy_path }}/external/skadi
 
 - name: python setup install tarrasque
-  command: python setup.py install chdir={{ deploy_path }}/external/tarrasque
+  command: python setup.py install chdir={{ mq.deploy_path }}/external/tarrasque
 
 - name: copy alacrity config
-  template: src=config.cfg.j2 dest={{ deploy_path }}/alacrity/config/config.cfg
+  template: src=config.cfg.j2 dest={{ mq.deploy_path }}/alacrity/config/config.cfg
 
 - name: copy celery config
-  template: src=celeryconfig.py.j2 dest={{ deploy_path }}/alacrity/mq/celeryconfig.py
+  template: src=celeryconfig.py.j2 dest={{ mq.deploy_path }}/alacrity/mq/celeryconfig.py
 
 - name: start celery workers
-  command: celery multi start {{ num_celery_workers }} --app=alacrity.mq -c {{ celery_concurrency }} --beat chdir={{ deploy_path }}
+  sudo: no
+  command: celery multi start {{ num_celery_workers }} --app=alacrity.mq --concurrency={{ celery_concurrency }} --beat chdir={{ mq.deploy_path }}
+
+- name: ensure celery running
+  shell: ps aux | grep "celery" | grep -v grep
 

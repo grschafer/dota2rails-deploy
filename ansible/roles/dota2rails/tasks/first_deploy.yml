@@ -2,26 +2,29 @@
 # not using gem ansible module b/c gem binary won't be where it expects
 # see https://groups.google.com/forum/#!topic/ansible-project/bcpYT13yao8
 - name: install global gems
-  command: "{{ ruby_bin }}/gem install {{ item }} chdir=~"
-  #gem: name={{ item }} state=latest
+  command: "/home/{{ ruby_deploy_user }}/.rbenv/shims/gem install {{ item }}"
+  #gem: name={{ item }} state=latest executable=/home/{{ ruby_deploy_user }}/.rbenv/shims/gem
   sudo: yes
   with_items:
     - bundler
 
-- name: ensure repo exists at {{ deploy_path }}
-  stat: path={{ deploy_path }}
+- name: rehash rbenv shims
+  command: "/home/{{ ruby_deploy_user }}/.rbenv/bin/rbenv rehash"
+
+- name: ensure repo exists at {{ web.deploy_path }}
+  stat: path={{ web.deploy_path }}
   register: app_path
 
 - fail: msg="Webapp repo was not synced to the server/VM"
   sudo: yes
   when: app_path.stat.isdir is not defined or app_path.stat.isdir == false
 
-- name: give repo to {{ deploy_user }}
+- name: give repo to {{ web.deploy_user }}
   sudo: yes
   file:
-    path={{ deploy_path }}
-    owner={{ deploy_user }}
+    path={{ web.deploy_path }}
+    owner={{ web.deploy_user }}
     recurse=yes
 
 - name: copy templated config
-  template: src=application.yml.rb.j2 dest={{ deploy_path }}/config/application.yml
+  template: src=application.yml.j2 dest={{ web.deploy_path }}/config/application.yml

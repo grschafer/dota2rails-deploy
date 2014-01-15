@@ -1,7 +1,7 @@
 ---
 # ufw guaranteed installed by dependencies (see mongodb-firewall/meta/main.yml)
 - name: only allow mongo port access by webservers
-  shell: ufw allow from {{ item }} to any port {{ mongodb_port }}
+  shell: ufw allow from {{ item }} to any port {{ db.port }}
   with_items: groups['webservers']
 
 # could be moved to mongodb-firewall/handlers/main.yml

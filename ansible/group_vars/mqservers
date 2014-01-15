@@ -1,6 +1,28 @@
-appname: alacrity
-deploy_path: /mqapps/{{ appname }}
-deploy_user: vagrant
+mq:
+  appname: alacrity
+  deploy_path: /mqapps/alacrity/
+  deploy_user: vagrant
+
+# these are default rabbitmq settings
+rabbitmq:
+  transport: amqp
+  user: guest
+  pass: guest
+  host: "{{ groups['mqservers'][0] }}"
+  port: 5672
+  vhost: ""
 
 num_celery_workers: 1
 celery_concurrency: 1
+
+email:
+  admins: # people to notify by email when errors happen parsing replays
+    - name: "Name"
+      address: "name@example.com"
+  # config for address that sends notifications/errors
+  address: "celery@example.com"
+  host: "smtp.example.com"
+  port: 25
+  user: "username"
+  pass: "password"
+  use_ssl: True

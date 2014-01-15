@@ -2,7 +2,7 @@
 
 server {
   listen   80;
-  root {{ deploy_path }}/public;
+  root {{ web.deploy_path }}/public;
   server_name _;
   index index.htm index.html;
 

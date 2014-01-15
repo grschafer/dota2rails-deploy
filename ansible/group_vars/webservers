@@ -1,10 +1,8 @@
-appname: dota2rails
-hostname: {{ groups['webservers'][0] }}
-deploy_path: /webapps/{{ appname }}
-deploy_user: vagrant
-
-# can make this with 'rake secret'
-app_secret: abcdef
+web:
+  appname: dota2rails
+  deploy_path: /webapps/dota2rails/
+  deploy_user: vagrant
+  app_secret: abcdef # can make this with 'rake secret'
 
 
 # Which user do we want to install ruby for
@@ -13,7 +11,7 @@ ruby_deploy_user: vagrant
 # Which versions we want to install (see `rbenv install -l`)
 ruby_versions:
     - 2.0.0-p247
-    - 1.9.3-p448
+    #- 1.9.3-p448
 
 # The default version (used with `rbenv global`)
 ruby_default: "2.0.0-p247"

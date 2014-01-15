@@ -1,6 +1,6 @@
 ---
 - name: setup machine
-  hosts: none # all
+  hosts: all:!local # all
   sudo: yes
   roles:
     - role: common
@@ -25,10 +25,16 @@
     - role: mongodb
     - role: mongodb-firewall
 
+- name: install node
+  hosts: webservers:matchurls # webservers:matchurls
+  sudo: yes
+  roles:
+    - role: nodejs
+
 # TODO: split installing from deploying?
 - name: install dota2rails app
-  hosts: special # webservers
-  remote_user: "{{ deploy_user }}"
+  hosts: webservers # webservers
+  remote_user: "{{ web.deploy_user }}"
   sudo: no
   roles:
     - role: dota2rails
@@ -41,19 +47,24 @@
 
 - name: install celery
   hosts: mqservers # mqservers
-  sudo: no
+  sudo: yes
   roles:
     - role: celery
 
+- name: alacrity submodules
+  hosts: local # local
+  tasks:
+    - name: update submodules
+      command: git submodule update --init --recursive chdir=..
+
 - name: install and run alacrity
   hosts: mqservers # mqservers
+  sudo: yes
   roles:
     - role: alacrity
 
-- name: install node and matchurls
+- name: install/run matchurls
   hosts: matchurls # matchurls
-  sudo: yes
+  sudo: no
   roles:
-    - role: nodejs
     - role: matchurls
-

@@ -11,7 +11,7 @@
   action: shell cd; bash -lc "rbenv install {{ version }}"
   when: ruby_is_installed|failed
   # Takes no more than 600 secs on a small VM
-  async: 600
+  async: 900
   poll: 30
   tags:
     - ruby

@@ -1,15 +1,41 @@
 ---
 - name: ensure /webapps/matchurls folder
-  file: path={{ deploy_path }} state=directory
+  stat: path={{ matchurls.deploy_path }}
+  register: app_path
 
-- name: download matchurls repo
-  git: repo=git://github.com/grschafer/matchurls.git dest={{ deploy_path }}
+- fail: msg="Matchurls repo was not synced to the server/VM"
+  sudo: yes
+  when: app_path.stat.isdir is not defined or app_path.stat.isdir == false
+
+- name: give repo to {{ matchurls.deploy_user }}
+  sudo: yes
+  file:
+    path={{ matchurls.deploy_path }}
+    owner={{ matchurls.deploy_user }}
+    recurse=yes
 
 - name: update/install matchurls dependencies
-  command: npm install chdir={{ deploy_path }}
+  command: npm install chdir={{ matchurls.deploy_path }}
 
 - name: template matchurls config
-  template: src=config.js.j2 dest={{ deploy_path }}/config.js
+  template: src=config.js.j2 dest={{ matchurls.deploy_path }}/config.js
 
 - name: make empty sentry file
-  command: touch sentry chdir={{ deploy_path }} creates={{ deploy_path }}/sentry
+  command: touch sentry chdir={{ matchurls.deploy_path }} creates={{ matchurls.deploy_path }}/sentry
+
+# firewall access to webservers
+- name: give firewall access to webservers
+  shell: ufw allow from {{ item }} to any port {{ matchurls.port }}
+  with_items: groups['webservers'] + groups['mqservers']
+  sudo: yes
+
+# use forever module to "daemonize" server
+- name: install forever
+  npm: name=forever global=yes state=latest
+  sudo: yes
+
+- name: run matchurls
+  shell: "forever start app.js --spinSleepTime 10000 chdir={{ matchurls.deploy_path }}"
+
+- name: ensure matchurls running
+  shell: ps aux | grep "app.js" | grep -v grep

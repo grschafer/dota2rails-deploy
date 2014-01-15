@@ -4,3 +4,6 @@
 [submodule "alacrity"]
 	path = alacrity
 	url = git@github.com:grschafer/alacrity.git
+[submodule "matchurls"]
+	path = matchurls
+	url = git@github.com:grschafer/matchurls.git

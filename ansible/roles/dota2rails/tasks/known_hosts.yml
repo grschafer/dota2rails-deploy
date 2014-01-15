@@ -16,7 +16,7 @@
 - name: ensure github.com in known_hosts
   lineinfile:
     #dest=/etc/ssh/ssh_known_hosts
-    dest=/home/{{ deploy_user }}/.ssh/known_hosts
+    dest=/home/{{ web.deploy_user }}/.ssh/known_hosts
     create=yes
     state=present
     line="{{ github_key.stdout }}"

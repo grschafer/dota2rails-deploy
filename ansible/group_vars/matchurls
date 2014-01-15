@@ -1,7 +1,6 @@
-appname: matchurls
-deploy_path: /webapps/{{ appname }}
-deploy_user: vagrant
+# other matchurls variables in group_vars/all because also needed by mqservers
 
+# steam account info, for logging in to request matchurls
 steam:
   name:
   user:

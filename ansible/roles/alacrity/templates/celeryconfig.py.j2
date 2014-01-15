@@ -3,12 +3,12 @@ from datetime import timedelta
 from celery.schedules import crontab
 
 BROKER_URL = CELERY_RESULT_BACKEND = \
-        'transport://userid:password@hostname:port/virtual_host'
+        '{{ rabbitmq.transport }}://{{ rabbitmq.user }}:{{ rabbitmq.pass }}@{{ rabbitmq.host }}:{{ rabbitmq.port }}/{{ rabbitmq.vhost }}/'
 
 CELERY_IMPORTS = ['alacrity.mq.tasks']
 
-#CELERY_TASK_SERIALIZER = 'json' # default: 'pickle'
-#CELERY_RESULT_SERIALIZER = 'json' # default: 'pickle'
+CELERY_TASK_SERIALIZER = 'json' # default: 'pickle'
+CELERY_RESULT_SERIALIZER = 'json' # default: 'pickle'
 
 # remove results and result queues 1 hour after completion
 # shouldn't affect groups/chains even if worker is held up
@@ -38,15 +38,20 @@ CELERYBEAT_SCHEDULE = {
 
 CELERY_SEND_TASK_ERROR_EMAILS = True
 
-ADMINS = [('Name', 'name@example.com')]
+#ADMINS = [('Name', 'name@example.com')]
+ADMINS = [ \
+  {% for admin in email.admins %}
+    ("{{ admin.name }}", "{{ admin.address }}"),
+  {% endfor %}
+]
 
 # Email address used as sender (From field).
-SERVER_EMAIL = "celery@example.com"
+SERVER_EMAIL = "{{ email.address }}"
 
 # Mailserver configuration
-EMAIL_HOST = "smtp.example.com"
-EMAIL_PORT = 25
-EMAIL_HOST_USER = "username"
-EMAIL_HOST_PASSWORD = "password"
-EMAIL_USE_SSL = True
+EMAIL_HOST = "{{ email.host }}"
+EMAIL_PORT = {{ email.port }}
+EMAIL_HOST_USER = "{{ email.user }}"
+EMAIL_HOST_PASSWORD = "{{ email.pass }}"
+EMAIL_USE_SSL = {{ email.use_ssl }}
 #EMAIL_USE_TLS = True

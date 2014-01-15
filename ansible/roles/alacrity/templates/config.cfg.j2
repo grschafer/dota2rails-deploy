@@ -1,11 +1,11 @@
 [db]
-host: {{ mongodb_host }}
-port: {{ mongodb_port }}
-db_name: {{ db_name }}
-match_collection: {{ db_collections.matches }}
-league_collection: {{ db_collections.leagues }}
-errorgame_collection: {{ db_collections.errorgames }}
-userupload_collection: {{ db_collections.useruploads }}
+host: {{ db.host }}
+port: {{ db.port }}
+db_name: {{ db.name }}
+match_collection: {{ db.collections.matches }}
+league_collection: {{ db.collections.leagues }}
+errorgame_collection: {{ db.collections.errorgames }}
+userupload_collection: {{ db.collections.useruploads }}
 
 [api]
 key: {{ steam_api_key }}
@@ -21,3 +21,7 @@ hostname: {{ hostname }}
 access_key: {{ s3.alacrity.access_key }}
 secret_key: {{ s3.alacrity.secret_key }}
 bucket: {{ s3.buckets.match_data }}
+
+[matchurls]
+host: {{ matchurls.host }}
+port: {{ matchurls.port }}
