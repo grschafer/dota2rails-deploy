@@ -14,9 +14,6 @@
     owner={{ matchurls.deploy_user }}
     recurse=yes
 
-- name: update/install matchurls dependencies
-  command: npm install chdir={{ matchurls.deploy_path }}
-
 - name: template matchurls config
   template: src=config.js.j2 dest={{ matchurls.deploy_path }}/config.js
 
@@ -33,6 +30,10 @@
 - name: install forever
   npm: name=forever global=yes state=latest
   sudo: yes
+
+- name: update/install matchurls dependencies
+  command: npm install chdir={{ matchurls.deploy_path }}
+
 
 - name: run matchurls
   shell: "forever start app.js --spinSleepTime 10000 chdir={{ matchurls.deploy_path }}"

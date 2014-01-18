@@ -1,3 +1,5 @@
+# {{ ansible_managed }}
+
 from __future__ import absolute_import
 from datetime import timedelta
 from celery.schedules import crontab
@@ -6,6 +8,8 @@ BROKER_URL = CELERY_RESULT_BACKEND = \
         '{{ rabbitmq.transport }}://{{ rabbitmq.user }}:{{ rabbitmq.pass }}@{{ rabbitmq.host }}:{{ rabbitmq.port }}/{{ rabbitmq.vhost }}/'
 
 CELERY_IMPORTS = ['alacrity.mq.tasks']
+
+CELERY_ACCEPT_CONTENT = ['json']
 
 CELERY_TASK_SERIALIZER = 'json' # default: 'pickle'
 CELERY_RESULT_SERIALIZER = 'json' # default: 'pickle'
@@ -27,12 +31,16 @@ CELERY_ENABLE_UTC = True
 
 CELERYBEAT_SCHEDULE = {
         'find new matches': {
-            'task': 'alacrity.mq.tasks.workflow',
-            'schedule': crontab(minute=16, hour=21),
+            'task': 'alacrity.mq.tasks.league_match_workflow',
+            'schedule': crontab(minute='*/30', hour='*'),
+        },
+        'process user uploaded matches': {
+            'task': 'alacrity.mq.tasks.user_replay_workflow',
+            'schedule': crontab(minute='*/15', hour='*'),
         },
         'update leagues': {
             'task': 'alacrity.mq.tasks.update_leagues',
-            'schedule': crontab(minute=39, hour=20),
+            'schedule': crontab(minute=0, hour=0),
         },
 }
 

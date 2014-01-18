@@ -6,6 +6,9 @@
 - fail: msg="Webapp repo was not synced to the server/VM"
   when: app_path.stat.isdir is not defined or app_path.stat.isdir == false
 
+- name: copy templated config
+  template: src=application.yml.j2 dest={{ web.deploy_path }}/config/application.yml
+
 # TODO: move this to capistrano?
 - name: bundle install
   command: /home/{{ ruby_deploy_user }}/.rbenv/shims/bundle install chdir={{ web.deploy_path }}

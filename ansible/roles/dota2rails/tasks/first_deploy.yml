@@ -25,6 +25,3 @@
     path={{ web.deploy_path }}
     owner={{ web.deploy_user }}
     recurse=yes
-
-- name: copy templated config
-  template: src=application.yml.j2 dest={{ web.deploy_path }}/config/application.yml

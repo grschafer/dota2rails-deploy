@@ -13,7 +13,7 @@ accessible_leagues:
   - 65013 # MLG Columbus Nov 2013
 
 matchurls:
-  host: "{{ groups['mqservers'][0] }}"
+  host: "{{ groups['matchurls'][0] }}"
   port: 3100
   appname: matchurls
   deploy_path: /webapps/matchurls/
