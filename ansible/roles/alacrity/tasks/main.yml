@@ -28,14 +28,18 @@
 
 - name: copy alacrity config
   template: src=config.cfg.j2 dest={{ mq.deploy_path }}/alacrity/config/config.cfg
+  tags: deploy
 
 - name: copy celery config
   template: src=celeryconfig.py.j2 dest={{ mq.deploy_path }}/alacrity/mq/celeryconfig.py
+  tags: deploy
 
 - name: start or restart celery workers
   sudo: no
   command: celery multi restart {{ num_celery_workers }} --app=alacrity.mq --concurrency={{ celery_concurrency }} --beat chdir={{ mq.deploy_path }}
+  tags: deploy
 
 - name: ensure celery running
   shell: ps aux | grep "celery" | grep -v grep
+  tags: deploy
 
