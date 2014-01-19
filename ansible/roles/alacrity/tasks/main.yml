@@ -32,9 +32,9 @@
 - name: copy celery config
   template: src=celeryconfig.py.j2 dest={{ mq.deploy_path }}/alacrity/mq/celeryconfig.py
 
-- name: start celery workers
+- name: start or restart celery workers
   sudo: no
-  command: celery multi start {{ num_celery_workers }} --app=alacrity.mq --concurrency={{ celery_concurrency }} --beat chdir={{ mq.deploy_path }}
+  command: celery multi restart {{ num_celery_workers }} --app=alacrity.mq --concurrency={{ celery_concurrency }} --beat chdir={{ mq.deploy_path }}
 
 - name: ensure celery running
   shell: ps aux | grep "celery" | grep -v grep

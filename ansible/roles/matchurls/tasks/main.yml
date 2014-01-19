@@ -34,6 +34,14 @@
 - name: update/install matchurls dependencies
   command: npm install chdir={{ matchurls.deploy_path }}
 
+- name: is matchurls running
+  shell: ps aux | grep "app.js" | grep -v grep
+  register: matchurls_running
+  ignore_errors: yes
+
+- name: stop matchurls if running
+  command: forever stop app.js
+  when: matchurls_running|success
 
 - name: run matchurls
   shell: "forever start app.js --spinSleepTime 10000 chdir={{ matchurls.deploy_path }}"
